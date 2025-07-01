@@ -494,7 +494,8 @@
             generatedTipElement.classList.add('hidden');
             loadingSpinner.style.display = 'block'; // Show spinner
 
-            const prompt = `Generate a concise, practical study tip (2-3 sentences) for a student to apply the '${currentStrategy}' desirable difficulty strategy specifically when studying '${subject}'. Focus on actionable advice.`;
+            // Modified prompt to phrase the tip as something teachers can ask students to do
+            const prompt = `Generate a concise, practical tip (2-3 sentences) for a teacher to ask their students to apply the '${currentStrategy}' desirable difficulty strategy specifically when studying '${subject}'. Focus on actionable advice for the teacher's instruction.`;
 
             try {
                 let chatHistory = [];
@@ -530,4 +531,4 @@
         });
     </script>
 </body>
-</html>
+</ht
