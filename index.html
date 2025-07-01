@@ -55,60 +55,39 @@
         </section>
 
         <section id="comparison" class="mb-12">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#00539F] mb-8">Comparing Learning Strategies</h2>
-            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">For each concept, we've visualized the estimated impact on long-term learning. The most common, "easy" methods often fall short, while their more challenging counterparts build robust, durable knowledge.</p>
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#00539F] mb-8">Examples of Desirable Difficulties</h2>
+            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">These learning strategies, while initially feeling more challenging, lead to robust, durable knowledge.</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
 
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">1. Spaced Practice</h3>
                     <p class="text-center text-gray-600 mb-4">Distributing study sessions over time is far more effective than cramming them all at once. <span class="font-semibold">Example:</span> Instead of studying for 6 hours straight for a test, study for 1 hour each day for 6 days.</p>
-                    <div class="chart-container h-64 sm:h-auto">
-                        <canvas id="spacedPracticeChart"></canvas>
-                    </div>
+                    <p class="text-center text-gray-700 mt-4 font-semibold">🗓️ Tip for Educators: Integrate low-stakes quizzes or review sessions spread across units, rather than just before a major exam.</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">2. Interleaving</h3>
                     <p class="text-center text-gray-600 mb-4">Mixing up different topics or problem types forces your brain to work harder to find the right solution. <span class="font-semibold">Example:</span> When studying math, alternate between algebra, geometry, and calculus problems rather than doing all algebra first.</p>
-                    <div class="chart-container h-64 sm:h-auto">
-                        <canvas id="interleavingChart"></canvas>
-                    </div>
+                    <p class="text-center text-gray-700 mt-4 font-semibold">🧩 Tip for Educators: Design homework sets or practice problems that mix different concepts or problem types from a unit, rather than grouping similar problems together.</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">3. Varied Practice</h3>
                     <p class="text-center text-gray-600 mb-4">Practicing a skill under various conditions makes it more flexible and applicable to new situations. <span class="font-semibold">Example:</span> A basketball player practices free throws from different spots on the court, not just the foul line.</p>
-                    <div class="chart-container h-64 sm:h-auto">
-                        <canvas id="variedPracticeChart"></canvas>
-                    </div>
+                    <p class="text-center text-gray-700 mt-4 font-semibold">🗺️ Tip for Educators: Present concepts in different formats (e.g., lecture, case study, group discussion) and ask students to apply knowledge to diverse, real-world scenarios.</p>
                 </div>
 
                 <div class="bg-white rounded-lg shadow-lg p-6">
                     <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">4. Retrieval Practice</h3>
                     <p class="text-center text-gray-600 mb-4">Actively recalling information (the "testing effect") strengthens memory more than passively re-reading. <span class="font-semibold">Example:</span> After reading a chapter, close the book and try to write down everything you remember, or use flashcards to quiz yourself.</p>
-                    <div class="chart-container h-64 sm:h-auto">
-                        <canvas id="retrievalPracticeChart"></canvas>
-                    </div>
+                    <p class="text-center text-gray-700 mt-4 font-semibold">📝 Tip for Educators: Regularly use "exit tickets," "brain dumps," or brief, ungraded quizzes at the start or end of class to prompt active recall.</p>
                 </div>
             </div>
              <div class="mt-8 md:mt-12 bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
                 <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">5. Generation</h3>
                 <p class="text-center text-gray-600 mb-4">Trying to generate an answer yourself before being told engages deeper cognitive processes. <span class="font-semibold">Example:</span> Before looking at the solution to a problem, try to solve it yourself, even if you're unsure. Or, try to explain a concept in your own words before checking the textbook.</p>
-                <div class="chart-container h-64 sm:h-auto">
-                    <canvas id="generationChart"></canvas>
-                </div>
-            </div>
-        </section>
-
-
-        <section id="retention" class="my-16">
-            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#00539F] mb-4">The Forgetting Curve: Visualizing the Impact</h2>
-            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-8">This chart illustrates the core benefit of desirable difficulties. While cramming leads to rapid short-term memory, knowledge quickly fades. Spaced practice results in slower initial learning but dramatically better long-term retention.</p>
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="chart-container h-80 sm:h-96">
-                    <canvas id="forgettingCurveChart"></canvas>
-                </div>
+                <p class="text-center text-gray-700 mt-4 font-semibold">💡 Tip for Educators: Encourage students to predict outcomes, formulate hypotheses, or summarize readings in their own words before providing the "correct" answer or explanation.</p>
             </div>
         </section>
 
@@ -173,6 +152,10 @@
             light: 'rgba(0, 186, 222, 0.2)' 
         };
 
+        // All chart-related JavaScript functions and calls are removed.
+        // The wrapLabel and commonTooltipCallback functions are no longer needed
+        // as there are no charts, but I'll keep them for now in case charts are
+        // re-added later, to avoid breaking other potential JS.
         function wrapLabel(str, max_width) {
             const words = str.split(' ');
             let lines = [];
@@ -209,104 +192,6 @@
                 }
             }
         };
-
-        function createComparisonChart(canvasId, desirableLabel, easyLabel, desirableValue, easyValue) {
-            const ctx = document.getElementById(canvasId).getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [wrapLabel(desirableLabel, 18), wrapLabel(easyLabel, 18)],
-                    datasets: [{
-                        label: 'Effectiveness for Long-Term Learning',
-                        data: [desirableValue, easyValue],
-                        backgroundColor: [brilliantBlues.secondary, brilliantBlues.light],
-                        borderColor: [brilliantBlues.primary, brilliantBlues.accent],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    ...commonTooltipCallback,
-                    maintainAspectRatio: false,
-                    indexAxis: 'y',
-                    scales: {
-                        x: {
-                            beginAtZero: true,
-                            max: 100,
-                             ticks: {
-                                callback: function(value) {
-                                    return value + '%'
-                                }
-                            }
-                        },
-                         y: {
-                            ticks: {
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        createComparisonChart('spacedPracticeChart', 'Spaced Practice (Distributed Practice)', 'Cramming (Massed Practice)', 90, 35);
-        createComparisonChart('interleavingChart', 'Interleaving Topics', 'Blocked Practice', 85, 40);
-        createComparisonChart('variedPracticeChart', 'Varied Practice Conditions', 'Constant Practice Conditions', 88, 50);
-        createComparisonChart('retrievalPracticeChart', 'Retrieval Practice (Self-Testing)', 'Passive Re-reading', 95, 25);
-        createComparisonChart('generationChart', 'Generating Answers Beforehand', 'Passively Receiving Answers', 80, 30);
-
-
-        const forgettingCtx = document.getElementById('forgettingCurveChart').getContext('2d');
-        new Chart(forgettingCtx, {
-            type: 'line',
-            data: {
-                labels: ['1 Day', '2 Days', '7 Days', '14 Days', '30 Days'],
-                datasets: [{
-                    label: 'Spaced Practice',
-                    data: [95, 90, 85, 82, 78],
-                    borderColor: brilliantBlues.primary,
-                    backgroundColor: brilliantBlues.primary + '33',
-                    tension: 0.3,
-                    fill: true
-                }, {
-                    label: 'Cramming',
-                    data: [70, 50, 25, 15, 5],
-                    borderColor: brilliantBlues.accent,
-                    backgroundColor: brilliantBlues.accent + '33',
-                    tension: 0.3,
-                    fill: true
-                }]
-            },
-            options: {
-                maintainAspectRatio: false,
-                plugins: {
-                     legend: {
-                        position: 'top',
-                     },
-                     tooltip: {
-                         mode: 'index',
-                         intersect: false
-                     }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        title: {
-                            display: true,
-                            text: 'Knowledge Retained (%)'
-                        }
-                    },
-                     x: {
-                        title: {
-                            display: true,
-                            text: 'Time Since Learning'
-                        }
-                    }
-                }
-            }
-        });
     </script>
 </body>
 </html>
