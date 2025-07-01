@@ -231,7 +231,6 @@
                                 <li><span class="font-semibold">Science:</span> Revisiting concepts from previous chapters (e.g., cell biology, genetics) in short bursts over weeks.</li>
                                 <li><span class="font-semibold">Language Learning:</span> Practicing vocabulary or grammar rules for 15 minutes daily, not just once a week.</li>
                                 <li><span class="font-semibold">Art & Music:</span> Practicing a specific musical passage or drawing technique for short periods each day.</li>
-                                <li><span class="font-semibold">Physical Education:</span> Practicing a specific sports drill (e.g., dribbling) for 10 minutes at the start of each practice session.</li>
                                 <li><span class="font-semibold">Computer:</span> Reviewing coding syntax or debugging techniques for a short period each day.</li>
                                 <li><span class="font-semibold">Values Education:</span> Discussing ethical dilemmas or civic responsibilities in weekly, ongoing conversations.</li>
                                 <li><span class="font-semibold">Guidance:</span> Regularly reflecting on career goals or personal development plans through journal entries or short check-ins.</li>
@@ -511,18 +510,19 @@
                 });
 
                 const result = await response.json();
-                
+                console.log('Gemini API Response:', result); // Log the full response
+
                 if (result.candidates && result.candidates.length > 0 &&
                     result.candidates[0].content && result.candidates[0].content.parts &&
                     result.candidates[0].content.parts.length > 0) {
                     const text = result.candidates[0].content.parts[0].text;
                     generatedTipElement.textContent = text;
                 } else {
-                    generatedTipElement.textContent = 'Could not generate a tip. Please try again.';
+                    generatedTipElement.textContent = 'Could not generate a tip. Please try again. (No valid content in response)';
                 }
             } catch (error) {
                 console.error('Error calling Gemini API:', error);
-                generatedTipElement.textContent = 'An error occurred. Please try again later.';
+                generatedTipElement.textContent = 'An error occurred. Please try again later. (Check console for details)';
             } finally {
                 loadingSpinner.style.display = 'none'; // Hide spinner
                 generatedTipElement.classList.remove('hidden'); // Show tip area
