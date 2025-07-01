@@ -5,27 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Power of Desirable Difficulties</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 320px;
-            max-height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-            }
         }
         .flowchart-step {
             border: 2px solid #00BADE;
@@ -35,6 +20,170 @@
         .flowchart-arrow {
             color: #00A1E4;
             font-weight: 900;
+        }
+
+        /* Card Flip Styles */
+        .flipper-container {
+            perspective: 1000px; /* For 3D effect */
+            width: 100%;
+            height: 100%;
+            min-height: 580px; /* Increased min-height to ensure space for all content */
+        }
+        @media (min-width: 768px) {
+            .flipper-container {
+                min-height: 550px; /* Adjusted min-height for larger screens */
+            }
+        }
+        .flipper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flipper-container.flipped .flipper {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%; /* Force full height of parent */
+            backface-visibility: hidden; /* Hide the back of the card when not facing the user */
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 6px 10px -3px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.08); /* Slightly more pronounced shadow */
+            padding: 1.75rem; /* Increased padding for better spacing */
+            background-color: #ffffff; /* bg-white */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Align content to the start */
+            box-sizing: border-box; /* Include padding in element's total width and height */
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            padding-top: 2.5rem; /* Extra padding at top for close icon */
+            height: 100%; /* Ensure card-back takes full height */
+            display: flex; /* Ensure card-back is a flex container */
+            flex-direction: column; /* Stack children vertically */
+            justify-content: flex-start; /* Align content to the start */
+        }
+        .card-back::-webkit-scrollbar {
+            width: 6px; /* Thinner scrollbar */
+        }
+        .card-back::-webkit-scrollbar-thumb {
+            background-color: #00A1E4; /* Blue scrollbar thumb */
+            border-radius: 3px;
+        }
+        .card-back::-webkit-scrollbar-track {
+            background-color: #f0f0f0; /* Light track */
+        }
+        .flip-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #00A1E4;
+            transition: transform 0.3s ease-in-out;
+        }
+        .flip-icon:hover {
+            transform: scale(1.1);
+        }
+        .close-icon {
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #00A1E4;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10;
+        }
+        .card-front h3, .card-back h3 {
+            margin-bottom: 1rem; /* Consistent margin-bottom for headings */
+            flex-shrink: 0; /* Prevent heading from shrinking */
+        }
+        .card-front .strategy-description {
+            margin-bottom: 1rem; /* Consistent margin between text blocks */
+            flex-grow: 1; /* Allow description to grow */
+            overflow-y: auto; /* Allow scrolling if text is too long */
+            min-height: 0; /* Important for flex items with overflow */
+        }
+        .card-front .educator-tip {
+            margin-top: auto; /* Push to the bottom */
+            flex-shrink: 0; /* Prevent tip from shrinking */
+        }
+
+        .card-back ul {
+            padding-left: 1.25rem; /* Adjust list indentation */
+            flex-grow: 1; /* Allow the ul to grow and fill available space */
+            min-height: 0; /* Important for flex items with overflow */
+            overflow-y: auto; /* Apply scrolling here */
+            list-style-type: disc; /* Ensure disc bullets */
+            margin-bottom: 1rem; /* Add margin-bottom to ul for spacing before button */
+        }
+        .card-back li {
+            margin-bottom: 0.5rem; /* Spacing between list items */
+        }
+        .strategy-icon {
+            font-size: 2.5rem; /* Larger icons */
+            color: #0072BB; /* Primary blue color */
+            margin-bottom: 0.75rem; /* Space below icon */
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            transform: translateY(-20px);
+            transition: transform 0.3s ease-in-out;
+            position: relative;
+            display: flex; /* Added flex display */
+            flex-direction: column; /* Stack children vertically */
+            gap: 1rem; /* Spacing between modal elements */
+        }
+        .modal-overlay.open .modal-content {
+            transform: translateY(0);
+        }
+        .modal-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #00539F;
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #00A1E4;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 1rem auto;
+            display: none; /* Hidden by default */
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -56,38 +205,175 @@
 
         <section id="comparison" class="mb-12">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-[#00539F] mb-8">Examples of Desirable Difficulties</h2>
-            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">These learning strategies, while initially feeling more challenging, lead to robust, durable knowledge.</p>
+            <p class="max-w-3xl mx-auto text-center text-gray-600 mb-10">These learning strategies, while initially feeling more challenging, lead to robust, durable knowledge. Click the 🔄 icon to see subject-specific examples!</p>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">1. Spaced Practice</h3>
-                    <p class="text-center text-gray-600 mb-4">Distributing study sessions over time is far more effective than cramming them all at once. <span class="font-semibold">Example:</span> Instead of studying for 6 hours straight for a test, study for 1 hour each day for 6 days.</p>
-                    <p class="text-center text-gray-700 mt-4 font-semibold">🗓️ Tip for Educators: Integrate low-stakes quizzes or review sessions spread across units, rather than just before a major exam.</p>
+                <!-- Spaced Practice Card -->
+                <div class="flipper-container">
+                    <div class="flipper">
+                        <div class="card-front">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-2xl font-bold text-[#0072BB]">1. Spaced Practice</h3>
+                                <span class="flip-icon" data-card="spaced">🔄</span>
+                            </div>
+                            <div class="flex flex-col items-center mb-4">
+                                <span class="strategy-icon">📅</span>
+                            </div>
+                            <p class="text-gray-600 text-sm md:text-base strategy-description">Distributing study sessions over time is far more effective than cramming them all at once. <span class="font-semibold">Example:</span> Instead of studying for 6 hours straight for a test, study for 1 hour each day for 6 days.</p>
+                            <p class="text-gray-700 text-sm md:text-base font-semibold educator-tip">🗓️ Tip for Educators: Integrate low-stakes quizzes or review sessions spread across units, rather than just before a major exam.</p>
+                        </div>
+                        <div class="card-back">
+                            <span class="close-icon" data-card="spaced">✖️</span>
+                            <h3 class="text-2xl font-bold text-[#0072BB] mb-4 text-center">Spaced Practice in Subjects</h3>
+                            <ul class="list-disc list-inside text-gray-700 text-xs md:text-sm space-y-2">
+                                <li><span class="font-semibold">Math:</span> Reviewing different types of problems (e.g., fractions, decimals) on different days.</li>
+                                <li><span class="font-semibold">Science:</span> Revisiting concepts from previous chapters (e.g., cell biology, genetics) in short bursts over weeks.</li>
+                                <li><span class="font-semibold">Language Learning:</span> Practicing vocabulary or grammar rules for 15 minutes daily, not just once a week.</li>
+                                <li><span class="font-semibold">Art & Music:</span> Practicing a specific musical passage or drawing technique for short periods each day.</li>
+                                <li><span class="font-semibold">Physical Education:</span> Practicing a specific sports drill (e.g., dribbling) for 10 minutes at the start of each practice session.</li>
+                                <li><span class="font-semibold">Computer:</span> Reviewing coding syntax or debugging techniques for a short period each day.</li>
+                                <li><span class="font-semibold">Values Education:</span> Discussing ethical dilemmas or civic responsibilities in weekly, ongoing conversations.</li>
+                                <li><span class="font-semibold">Guidance:</span> Regularly reflecting on career goals or personal development plans through journal entries or short check-ins.</li>
+                            </ul>
+                            <button class="mt-4 px-4 py-2 bg-[#00A1E4] text-white rounded-md shadow-md hover:bg-[#0072BB] transition-colors self-center"
+                                    onclick="openTipModal('Spaced Practice')">✨ Get Personalized Tip</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">2. Interleaving</h3>
-                    <p class="text-center text-gray-600 mb-4">Mixing up different topics or problem types forces your brain to work harder to find the right solution. <span class="font-semibold">Example:</span> When studying math, alternate between algebra, geometry, and calculus problems rather than doing all algebra first.</p>
-                    <p class="text-center text-gray-700 mt-4 font-semibold">🧩 Tip for Educators: Design homework sets or practice problems that mix different concepts or problem types from a unit, rather than grouping similar problems together.</p>
+                <!-- Interleaving Card -->
+                <div class="flipper-container">
+                    <div class="flipper">
+                        <div class="card-front">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-2xl font-bold text-[#0072BB]">2. Interleaving</h3>
+                                <span class="flip-icon" data-card="interleaving">🔄</span>
+                            </div>
+                            <div class="flex flex-col items-center mb-4">
+                                <span class="strategy-icon">🔀</span>
+                            </div>
+                            <p class="text-gray-600 text-sm md:text-base strategy-description">Mixing up different topics or problem types forces your brain to work harder to find the right solution. <span class="font-semibold">Example:</span> When studying math, alternate between algebra, geometry, and calculus problems rather than doing all algebra first.</p>
+                            <p class="text-gray-700 text-sm md:text-base font-semibold educator-tip">🧩 Tip for Educators: Design homework sets or practice problems that mix different concepts or problem types from a unit, rather than grouping similar problems together.</p>
+                        </div>
+                        <div class="card-back">
+                            <span class="close-icon" data-card="interleaving">✖️</span>
+                            <h3 class="text-2xl font-bold text-[#0072BB] mb-4 text-center">Interleaving in Subjects</h3>
+                            <ul class="list-disc list-inside text-gray-700 text-xs md:text-sm space-y-2">
+                                <li><span class="font-semibold">Math:</span> A homework set that mixes problems on addition, subtraction, multiplication, and division.</li>
+                                <li><span class="font-semibold">Science:</span> Studying for an exam by alternating between questions on photosynthesis, cellular respiration, and genetics.</li>
+                                <li><span class="font-semibold">Language Learning:</span> Practicing verb conjugations for different tenses and irregular verbs within the same session.</li>
+                                <li><span class="font-semibold">Art & Music:</span> Practicing scales, then a piece, then sight-reading in one music session.</li>
+                                <li><span class="font-semibold">Physical Education:</span> A practice session that alternates between offensive drills, defensive drills, and conditioning.</li>
+                                <li><span class="font-semibold">Computer:</span> Debugging a program that involves multiple concepts (e.g., loops, functions, data structures).</li>
+                                <li><span class="font-semibold">Values Education:</span> Discussing different types of ethical dilemmas (e.g., personal, societal) within one class period.</li>
+                                <li><span class="font-semibold">Guidance:</span> Exploring different career paths (e.g., STEM, arts, trades) in a single guidance session, comparing them.</li>
+                            </ul>
+                            <button class="mt-4 px-4 py-2 bg-[#00A1E4] text-white rounded-md shadow-md hover:bg-[#0072BB] transition-colors self-center"
+                                    onclick="openTipModal('Interleaving')">✨ Get Personalized Tip</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">3. Varied Practice</h3>
-                    <p class="text-center text-gray-600 mb-4">Practicing a skill under various conditions makes it more flexible and applicable to new situations. <span class="font-semibold">Example:</span> A basketball player practices free throws from different spots on the court, not just the foul line.</p>
-                    <p class="text-center text-gray-700 mt-4 font-semibold">🗺️ Tip for Educators: Present concepts in different formats (e.g., lecture, case study, group discussion) and ask students to apply knowledge to diverse, real-world scenarios.</p>
+                <!-- Varied Practice Card -->
+                <div class="flipper-container">
+                    <div class="flipper">
+                        <div class="card-front">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-2xl font-bold text-[#0072BB]">3. Varied Practice</h3>
+                                <span class="flip-icon" data-card="varied">🔄</span>
+                            </div>
+                            <div class="flex flex-col items-center mb-4">
+                                <span class="strategy-icon">🔄</span>
+                            </div>
+                            <p class="text-gray-600 text-sm md:text-base strategy-description">Practicing a skill under various conditions makes it more flexible and applicable to new situations. <span class="font-semibold">Example:</span> A basketball player practices free throws from different spots on the court, not just the foul line.</p>
+                            <p class="text-gray-700 text-sm md:text-base font-semibold educator-tip">🗺️ Tip for Educators: Present concepts in different formats (e.g., lecture, case study) and ask students to apply knowledge to diverse, real-world scenarios.</p>
+                        </div>
+                        <div class="card-back">
+                            <span class="close-icon" data-card="varied">✖️</span>
+                            <h3 class="text-2xl font-bold text-[#0072BB] mb-4 text-center">Varied Practice in Subjects</h3>
+                            <ul class="list-disc list-inside text-gray-700 text-xs md:text-sm space-y-2">
+                                <li><span class="font-semibold">Math:</span> Solving word problems that use the same operation but are presented in different contexts (e.g., money, distance).</li>
+                                <li><span class="font-semibold">Science:</span> Conducting the same experiment using different variables or under slightly different conditions.</li>
+                                <li><span class="font-semibold">Language Learning:</span> Practicing a new grammar structure by writing sentences, then speaking them, then listening for them.</li>
+                                <li><span class="font-semibold">Art & Music:</span> Drawing the same object from multiple angles or using various mediums. Playing a piece at different tempos.</li>
+                                <li><span class="font-semibold">Physical Education:</span> Practicing soccer passing drills with different types of passes and to different targets.</li>
+                                <li><span class="font-semibold">Computer:</span> Writing code to achieve the same output using different programming paradigms or data structures.</li>
+                                <li><span class="font-semibold">Values Education:</span> Analyzing an ethical concept (e.g., fairness) through different scenarios, from personal to global issues.</li>
+                                <li><span class="font-semibold">Guidance:</span> Practicing interview skills by role-playing different interviewers and for different types of jobs.</li>
+                            </ul>
+                            <button class="mt-4 px-4 py-2 bg-[#00A1E4] text-white rounded-md shadow-md hover:bg-[#0072BB] transition-colors self-center"
+                                    onclick="openTipModal('Varied Practice')">✨ Get Personalized Tip</button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-white rounded-lg shadow-lg p-6">
-                    <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">4. Retrieval Practice</h3>
-                    <p class="text-center text-gray-600 mb-4">Actively recalling information (the "testing effect") strengthens memory more than passively re-reading. <span class="font-semibold">Example:</span> After reading a chapter, close the book and try to write down everything you remember, or use flashcards to quiz yourself.</p>
-                    <p class="text-center text-gray-700 mt-4 font-semibold">📝 Tip for Educators: Regularly use "exit tickets," "brain dumps," or brief, ungraded quizzes at the start or end of class to prompt active recall.</p>
+                <!-- Retrieval Practice Card -->
+                <div class="flipper-container">
+                    <div class="flipper">
+                        <div class="card-front">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-2xl font-bold text-[#0072BB]">4. Retrieval Practice</h3>
+                                <span class="flip-icon" data-card="retrieval">🔄</span>
+                            </div>
+                            <div class="flex flex-col items-center mb-4">
+                                <span class="strategy-icon">🧠</span>
+                            </div>
+                            <p class="text-gray-600 text-sm md:text-base strategy-description">Actively recalling information (the "testing effect") strengthens memory more than passively re-reading. <span class="font-semibold">Example:</span> After reading a chapter, close the book and try to write down everything you remember, or use flashcards to quiz yourself.</p>
+                            <p class="text-gray-700 text-sm md:text-base font-semibold educator-tip">📝 Tip for Educators: Regularly use "exit tickets," "brain dumps," or brief, ungraded quizzes at the start or end of class to prompt active recall.</p>
+                        </div>
+                        <div class="card-back">
+                            <span class="close-icon" data-card="retrieval">✖️</span>
+                            <h3 class="text-2xl font-bold text-[#0072BB] mb-4 text-center">Retrieval Practice in Subjects</h3>
+                            <ul class="list-disc list-inside text-gray-700 text-xs md:text-sm space-y-2">
+                                <li><span class="font-semibold">Math:</span> After learning a new formula, trying to recall it from memory before looking it up.</li>
+                                <li><span class="font-semibold">Science:</span> Creating a "mind map" of a topic from memory after reading, then checking against notes.</li>
+                                <li><span class="font-semibold">Language Learning:</span> Using flashcards to recall vocabulary words or verb conjugations without looking at the answer.</li>
+                                <li><span class="font-semibold">Art & Music:</span> After studying a famous painting, trying to sketch it from memory. Trying to sing a melody from memory.</li>
+                                <li><span class="font-semibold">Physical Education:</span> After watching a demonstration of a new move, trying to execute it from memory.</li>
+                                <li><span class="font-semibold">Computer:</span> After learning a new command, typing it into the console from memory to see if it works.</li>
+                                <li><span class="font-semibold">Values Education:</span> After a discussion on a moral dilemma, writing a short reflection on your stance without referring to notes.</li>
+                                <li><span class="font-semibold">Guidance:</span> At the end of a session on study habits, listing three new strategies you learned from memory.</li>
+                            </ul>
+                            <button class="mt-4 px-4 py-2 bg-[#00A1E4] text-white rounded-md shadow-md hover:bg-[#0072BB] transition-colors self-center"
+                                    onclick="openTipModal('Retrieval Practice')">✨ Get Personalized Tip</button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-             <div class="mt-8 md:mt-12 bg-white rounded-lg shadow-lg p-6 max-w-2xl mx-auto">
-                <h3 class="text-2xl font-bold text-[#0072BB] text-center mb-1">5. Generation</h3>
-                <p class="text-center text-gray-600 mb-4">Trying to generate an answer yourself before being told engages deeper cognitive processes. <span class="font-semibold">Example:</span> Before looking at the solution to a problem, try to solve it yourself, even if you're unsure. Or, try to explain a concept in your own words before checking the textbook.</p>
-                <p class="text-center text-gray-700 mt-4 font-semibold">💡 Tip for Educators: Encourage students to predict outcomes, formulate hypotheses, or summarize readings in their own words before providing the "correct" answer or explanation.</p>
+
+                <!-- Generation Card -->
+                <!-- Removed redundant styling classes from this flipper-container -->
+                <div class="mt-8 md:mt-12 flipper-container">
+                    <div class="flipper">
+                        <div class="card-front">
+                            <div class="flex justify-between items-center mb-2">
+                                <h3 class="text-2xl font-bold text-[#0072BB]">5. Generation</h3>
+                                <span class="flip-icon" data-card="generation">🔄</span>
+                            </div>
+                            <div class="flex flex-col items-center mb-4">
+                                <span class="strategy-icon">✍️</span>
+                            </div>
+                            <p class="text-gray-600 text-sm md:text-base strategy-description">Trying to generate an answer yourself before being told engages deeper cognitive processes. <span class="font-semibold">Example:</span> Before looking at the solution to a problem, try to solve it yourself, even if you're unsure. Or, try to explain a concept in your own words before checking the textbook.</p>
+                            <p class="text-gray-700 text-sm md:text-base font-semibold educator-tip">💡 Tip for Educators: Encourage students to predict outcomes, formulate hypotheses, or summarize readings in their own words before providing the "correct" answer or explanation.</p>
+                        </div>
+                        <div class="card-back">
+                            <span class="close-icon" data-card="generation">✖️</span>
+                            <h3 class="text-2xl font-bold text-[#0072BB] mb-4 text-center">Generation in Subjects</h3>
+                            <ul class="list-disc list-inside text-gray-700 text-xs md:text-sm space-y-2">
+                                <li><span class="font-semibold">Math:</span> Trying to derive a formula or solve a complex problem before seeing the solution steps.</li>
+                                <li><span class="font-semibold">Science:</span> Predicting the outcome of an experiment before performing it, or explaining a scientific phenomenon in your own words.</li>
+                                <li><span class="font-semibold">Language Learning:</span> Trying to form a sentence in a new language before looking up the exact translation.</li>
+                                <li><span class="font-semibold">Art & Music:</span> Composing a short melody or sketching a concept from imagination before looking for references.</li>
+                                <li><span class="font-semibold">Physical Education:</span> Before a game, strategizing different plays or defensive formations based on opponent analysis.</li>
+                                <li><span class="font-semibold">Computer:</span> Designing a small program or algorithm to solve a specific problem before looking for existing solutions.</li>
+                                <li><span class="font-semibold">Values Education:</span> Brainstorming potential solutions to a community problem before being presented with existing initiatives.</li>
+                                <li><span class="font-semibold">Guidance:</span> Writing a personal mission statement or setting SMART goals for yourself before receiving templates or examples.</li>
+                            </ul>
+                            <button class="mt-4 px-4 py-2 bg-[#00A1E4] text-white rounded-md shadow-md hover:bg-[#0072BB] transition-colors self-center"
+                                    onclick="openTipModal('Generation')">✨ Get Personalized Tip</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -113,7 +399,6 @@
                 <div class="flowchart-step p-4 rounded-lg shadow-md w-full max-w-md text-center">
                     <p class="font-bold text-lg">4. WAIT: Take a Break (Spacing)</p>
                     <p class="text-sm">Let at least a day pass before revisiting the topic.</p>
-                </div>
                 <div class="text-4xl flowchart-arrow">&#11015;</div>
                  <div class="flowchart-step p-4 rounded-lg shadow-md w-full max-w-md text-center">
                     <p class="font-bold text-lg">5. RETRIEVE: Test Yourself</p>
@@ -143,6 +428,20 @@
 
     </div>
 
+    <!-- Personalized Tip Modal -->
+    <div id="tipModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <span class="modal-close-btn" onclick="closeTipModal()">✖️</span>
+            <h3 id="modalStrategyTitle" class="text-2xl font-bold text-[#0072BB] mb-4 text-center"></h3>
+            <p class="text-gray-700 mb-4 text-center">Enter a subject to get a personalized study tip:</p>
+            <input type="text" id="subjectInput" placeholder="e.g., History, Coding, Music Theory"
+                   class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00A1E4]">
+            <button id="generateTipBtn" class="w-full px-4 py-2 bg-[#00A1E4] text-white rounded-md shadow-md hover:bg-[#0072BB] transition-colors">✨ Generate Tip</button>
+            <div id="loadingSpinner" class="loading-spinner"></div>
+            <p id="generatedTip" class="text-gray-800 p-3 bg-gray-50 rounded-md border border-gray-200 hidden"></p>
+        </div>
+    </div>
+
     <script>
         const brilliantBlues = {
             primary: '#0072BB', 
@@ -152,46 +451,83 @@
             light: 'rgba(0, 186, 222, 0.2)' 
         };
 
-        // All chart-related JavaScript functions and calls are removed.
-        // The wrapLabel and commonTooltipCallback functions are no longer needed
-        // as there are no charts, but I'll keep them for now in case charts are
-        // re-added later, to avoid breaking other potential JS.
-        function wrapLabel(str, max_width) {
-            const words = str.split(' ');
-            let lines = [];
-            let current_line = '';
-            for(let i = 0; i < words.length; i++) {
-                let word = words[i];
-                let width = current_line.length + word.length;
-                if(current_line.length > 0) width++;
+        let currentStrategy = '';
 
-                if (width < max_width) {
-                    current_line += (current_line.length > 0 ? ' ' : '') + word;
-                } else {
-                    if (current_line.length > 0) lines.push(current_line);
-                    current_line = word;
-                }
-            }
-            if (current_line.length > 0) lines.push(current_line);
-            return lines;
+        document.querySelectorAll('.flip-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const cardId = this.dataset.card;
+                document.querySelector(`.flipper-container:has([data-card="${cardId}"])`).classList.add('flipped');
+            });
+        });
+
+        document.querySelectorAll('.close-icon').forEach(icon => {
+            icon.addEventListener('click', function() {
+                const cardId = this.dataset.card;
+                document.querySelector(`.flipper-container:has([data-card="${cardId}"])`).classList.remove('flipped');
+            });
+        });
+
+        function openTipModal(strategy) {
+            currentStrategy = strategy;
+            document.getElementById('modalStrategyTitle').textContent = `Personalized Tip for ${strategy}`;
+            document.getElementById('subjectInput').value = ''; // Clear previous input
+            document.getElementById('generatedTip').textContent = ''; // Clear previous tip
+            document.getElementById('generatedTip').classList.add('hidden'); // Hide tip area
+            document.getElementById('loadingSpinner').style.display = 'none'; // Hide spinner
+            document.getElementById('tipModalOverlay').classList.add('open');
         }
-        
-        const commonTooltipCallback = {
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        title: function(tooltipItems) {
-                            const item = tooltipItems[0];
-                            let label = item.chart.data.labels[item.dataIndex];
-                            return Array.isArray(label) ? label.join(' ') : label;
-                        }
-                    }
-                },
-                legend: {
-                    display: false
-                }
+
+        function closeTipModal() {
+            document.getElementById('tipModalOverlay').classList.remove('open');
+        }
+
+        document.getElementById('generateTipBtn').addEventListener('click', async () => {
+            const subject = document.getElementById('subjectInput').value.trim();
+            const generatedTipElement = document.getElementById('generatedTip');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+
+            if (!subject) {
+                generatedTipElement.textContent = 'Please enter a subject.';
+                generatedTipElement.classList.remove('hidden');
+                return;
             }
-        };
+
+            generatedTipElement.classList.add('hidden');
+            loadingSpinner.style.display = 'block'; // Show spinner
+
+            const prompt = `Generate a concise, practical study tip (2-3 sentences) for a student to apply the '${currentStrategy}' desirable difficulty strategy specifically when studying '${subject}'. Focus on actionable advice.`;
+
+            try {
+                let chatHistory = [];
+                chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                const payload = { contents: chatHistory };
+                const apiKey = ""; // Canvas will automatically provide the API key
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+                
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    generatedTipElement.textContent = text;
+                } else {
+                    generatedTipElement.textContent = 'Could not generate a tip. Please try again.';
+                }
+            } catch (error) {
+                console.error('Error calling Gemini API:', error);
+                generatedTipElement.textContent = 'An error occurred. Please try again later.';
+            } finally {
+                loadingSpinner.style.display = 'none'; // Hide spinner
+                generatedTipElement.classList.remove('hidden'); // Show tip area
+            }
+        });
     </script>
 </body>
 </html>
