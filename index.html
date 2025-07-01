@@ -494,8 +494,7 @@
             generatedTipElement.classList.add('hidden');
             loadingSpinner.style.display = 'block'; // Show spinner
 
-            // Modified prompt to phrase the tip as something teachers can ask students to do
-            const prompt = `Generate a concise, practical tip (2-3 sentences) for a teacher to ask their students to apply the '${currentStrategy}' desirable difficulty strategy specifically when studying '${subject}'. Focus on actionable advice for the teacher's instruction.`;
+            const prompt = `Generate a concise, practical study tip (2-3 sentences) for a student to apply the '${currentStrategy}' desirable difficulty strategy specifically when studying '${subject}'. Focus on actionable advice.`;
 
             try {
                 let chatHistory = [];
@@ -510,6 +509,14 @@
                     body: JSON.stringify(payload)
                 });
 
+                // Check if the HTTP response itself was successful
+                if (!response.ok) {
+                    const errorBody = await response.json();
+                    console.error('Gemini API HTTP Error:', response.status, response.statusText, errorBody);
+                    generatedTipElement.textContent = `Error: ${errorBody.error?.message || 'Failed to get a response from the API.'}`;
+                    return; // Exit early if HTTP error
+                }
+
                 const result = await response.json();
                 console.log('Gemini API Response:', result); // Log the full response
 
@@ -519,6 +526,8 @@
                     const text = result.candidates[0].content.parts[0].text;
                     generatedTipElement.textContent = text;
                 } else {
+                    // Log the full result if content is missing, to help debug unexpected structures
+                    console.error('Gemini API: No valid content found in response candidates.', result);
                     generatedTipElement.textContent = 'Could not generate a tip. Please try again. (No valid content in response)';
                 }
             } catch (error) {
@@ -531,4 +540,4 @@
         });
     </script>
 </body>
-</ht
+</html>
